@@ -1,17 +1,22 @@
 package co.sofka;
 
-import java.math.BigDecimal;
+
 
 public class Account {
 
     private String id;
-    private BigDecimal amount;
-    private String customer;
 
-    public Account(String id, BigDecimal amount, String customer) {
-        this.id = id;
-        this.amount = amount;
-        this.customer = customer;
+    private String code;
+
+    private String number;
+
+    private Double balance;
+
+    private String pin;
+
+    private Client client;
+
+    public Account() {
     }
 
     public String getId() {
@@ -22,19 +27,43 @@ public class Account {
         this.id = id;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public String getCode() {
+        return code;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getCustomer() {
-        return customer;
+    public String getNumber() {
+        return number;
     }
 
-    public void setCustomer(String customer) {
-        this.customer = customer;
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

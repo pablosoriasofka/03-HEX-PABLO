@@ -20,7 +20,7 @@ public class Handler {
 
         ResponseDTO responseDTO = new ResponseDTO(
                 account.getId(),
-                account.getCustomer()
+                "12"
         );
 
         return responseDTO;

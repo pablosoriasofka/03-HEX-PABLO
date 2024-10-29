@@ -1,13 +1,13 @@
 package co.sofka.usecase;
 
 import co.sofka.Account;
-import co.sofka.gateway.AccountRepository;
+import co.sofka.gateway.IAccountRepository;
 
 public class GetAccountByIdUseCase {
 
-    private final AccountRepository repository;
+    private final IAccountRepository repository;
 
-    public GetAccountByIdUseCase(AccountRepository repository) {
+    public GetAccountByIdUseCase(IAccountRepository repository) {
         this.repository = repository;
     }
 
