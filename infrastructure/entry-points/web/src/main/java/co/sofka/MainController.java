@@ -20,6 +20,12 @@ public class MainController {
 
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
+    private final IBankTransactionService service;
+
+    public MainController(IBankTransactionService service) {
+        this.service = service;
+    }
+
     @GetMapping("/test")
     public ResponseEntity<ResponseAPI<String>> tets() {
         logger.info("Test");
@@ -27,13 +33,6 @@ public class MainController {
                 .message("test").code(HttpStatus.OK.value())
                 .build(), HttpStatus.OK);
     }
-    private final IBankTransactionService service;
-
-    public MainController(IBankTransactionService service) {
-        this.service = service;
-    }
-
-
 
     @GetMapping("/all")
     public ResponseEntity<ResponseAPI<List<BankTransaction>>> getAll() {
