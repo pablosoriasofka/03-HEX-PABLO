@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
-@Service
 public class WithdrawFromATMUseCase {
 
     private static final Logger logger = LoggerFactory.getLogger(WithdrawFromATMUseCase.class);

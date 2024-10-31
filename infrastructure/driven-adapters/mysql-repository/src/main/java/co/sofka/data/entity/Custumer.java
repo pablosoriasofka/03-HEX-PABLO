@@ -2,7 +2,6 @@ package co.sofka.data.entity;
 
 
 
-import co.sofka.data.commons.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -13,25 +12,20 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "account_new")
-public class AccountEntity {
+@Table(name = "custumer")
+public class Custumer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private Long number;
-
     @Column(nullable = false)
-    private BigDecimal amount;
-
-    @ManyToOne
-    @JoinColumn(name = "custumer_id", nullable = false)
-    private ClientEntity client;
+    private String usrname;
 
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
+
+
 }

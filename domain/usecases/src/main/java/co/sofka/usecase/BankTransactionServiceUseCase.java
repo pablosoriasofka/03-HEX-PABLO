@@ -14,18 +14,15 @@ import co.sofka.middleware.AccountNotExistException;
 import co.sofka.middleware.AccountNotHaveBalanceException;
 import co.sofka.middleware.TypeOfBuysNotExistException;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
-@Service
-public class BankTransactionServiceImp implements IBankTransactionService {
+public class BankTransactionServiceUseCase implements IBankTransactionService {
 
-    private static final Logger logger = LoggerFactory.getLogger(BankTransactionServiceImp.class);
+    private static final Logger logger = LoggerFactory.getLogger(BankTransactionServiceUseCase.class);
 
     private final IBankTransactionRepository repository;
 
@@ -33,7 +30,7 @@ public class BankTransactionServiceImp implements IBankTransactionService {
 
     private final IBankRepository bankRepository;
 
-    public BankTransactionServiceImp(IBankTransactionRepository repository, IAccountRepository accountRepository, IBankRepository bankRepository) {
+    public BankTransactionServiceUseCase(IBankTransactionRepository repository, IAccountRepository accountRepository, IBankRepository bankRepository) {
         this.repository = repository;
         this.accountRepository = accountRepository;
         this.bankRepository = bankRepository;

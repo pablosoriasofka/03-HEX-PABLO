@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class GetAllBankTransactionUseCase {
+public class GetAllBankTransactionUseCase implements IGetAllBankTransactionService{
 
     private static final Logger logger = LoggerFactory.getLogger(GetAllBankTransactionUseCase.class);
 

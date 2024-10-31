@@ -4,6 +4,7 @@ package co.sofka;
 import co.sofka.data.ResponseAPI;
 import co.sofka.dto.*;
 import co.sofka.usecase.IBankTransactionService;
+import co.sofka.usecase.IGetAllBankTransactionService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,11 @@ public class MainController {
 
     private final IBankTransactionService service;
 
-    public MainController(IBankTransactionService service) {
+    private final IGetAllBankTransactionService getAllBankTransactionService;
+
+    public MainController(IGetAllBankTransactionService getAllBankTransactionService,IBankTransactionService service) {
         this.service = service;
+        this.getAllBankTransactionService = getAllBankTransactionService;
     }
 
     @GetMapping("/test")
@@ -37,7 +41,7 @@ public class MainController {
     @GetMapping("/all")
     public ResponseEntity<ResponseAPI<List<BankTransaction>>> getAll() {
         logger.info("Buscando todos los bancos");
-        return new ResponseEntity<>( ResponseAPI.<List<BankTransaction>>builder().bodyOut(service.getAll())
+        return new ResponseEntity<>( ResponseAPI.<List<BankTransaction>>builder().bodyOut(getAllBankTransactionService.getAll())
                 .message("Bancos encontrados").code(HttpStatus.OK.value())
                 .build(), HttpStatus.OK);
     }
