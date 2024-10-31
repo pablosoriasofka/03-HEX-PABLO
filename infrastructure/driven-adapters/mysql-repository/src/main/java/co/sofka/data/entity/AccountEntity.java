@@ -9,6 +9,7 @@ import lombok.Data;
 
 @Data
 @Entity
+
 @Table(name = "account")
 public class AccountEntity extends BaseEntity {
 
