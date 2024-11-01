@@ -35,9 +35,5 @@ public class AccountEntity {
     private Boolean isDeleted;
 
 
-//    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<TransactionAccountDetailEntity> transactionDetails;
-
-    // Getters y setters
 }
 

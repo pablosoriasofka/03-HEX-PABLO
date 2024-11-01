@@ -31,6 +31,5 @@ public class TransactionEntity {
     @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TransactionAccountDetailEntity> transactionDetails;
 
-    // Getters y setters
 }
 

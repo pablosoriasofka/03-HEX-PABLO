@@ -23,5 +23,4 @@ public class TransactionAccountDetailEntity {
     @Column(name = "transaction_role")
     private String transactionRole;
 
-    // Getters y setters
 }

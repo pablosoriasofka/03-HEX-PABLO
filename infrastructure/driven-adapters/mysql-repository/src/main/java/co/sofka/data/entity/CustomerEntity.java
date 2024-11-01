@@ -30,7 +30,5 @@ public class CustomerEntity {
 
 
 
-
-    // Getters y setters
 }
 
