@@ -1,6 +1,7 @@
 package co.sofka;
 
 
+import co.sofka.command.dto.CustomerDTO;
 import co.sofka.command.query.ListAllCustomerHandler;
 import co.sofka.data.ResponseAPI;
 import co.sofka.usecase.IGetAllCustomerService;
@@ -28,9 +29,9 @@ public class CustomerController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<ResponseAPI<List<Customer>>> getAll() {
+    public ResponseEntity<ResponseAPI<List<CustomerDTO>>> getAll() {
         logger.info("Buscando todos los Customer");
-        return new ResponseEntity<>( ResponseAPI.<List<Customer>>builder().bodyOut(handler.getAll())
+        return new ResponseEntity<>( ResponseAPI.<List<CustomerDTO>>builder().bodyOut(handler.getAll())
                 .message("Customer encontrados").code(HttpStatus.OK.value())
                 .build(), HttpStatus.OK);
     }
