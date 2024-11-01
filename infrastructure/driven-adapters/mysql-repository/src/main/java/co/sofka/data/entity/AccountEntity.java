@@ -1,37 +1,43 @@
 package co.sofka.data.entity;
 
-
-
-import co.sofka.data.commons.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
-import java.util.Date;
-
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "account_new")
+@Table(name = "account")
 public class AccountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private Long number;
+    private Integer number;
 
-    @Column(nullable = false)
     private BigDecimal amount;
 
     @ManyToOne
-    @JoinColumn(name = "custumer_id", nullable = false)
-    private ClientEntity client;
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @JsonBackReference
+    private CustomerEntity customer;
 
-    @LastModifiedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at", updatable = false)
-    private Date createdAt;
+    @Column(name = "created_at")
+    private LocalDate createdAt;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
+
+//    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<TransactionAccountDetailEntity> transactionDetails;
+
+    // Getters y setters
 }
+

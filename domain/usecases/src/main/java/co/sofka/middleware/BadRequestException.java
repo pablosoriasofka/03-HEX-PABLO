@@ -1,11 +1,7 @@
 package co.sofka.middleware;
 
 
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class BadRequestException extends RuntimeException {
 
     private Response bodyOut;
@@ -19,6 +15,14 @@ public class BadRequestException extends RuntimeException {
     }
 
     public BadRequestException(Response bodyOut) {
+        this.bodyOut = bodyOut;
+    }
+
+    public Response getBodyOut() {
+        return bodyOut;
+    }
+
+    public void setBodyOut(Response bodyOut) {
         this.bodyOut = bodyOut;
     }
 }

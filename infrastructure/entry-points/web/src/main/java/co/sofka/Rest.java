@@ -19,12 +19,12 @@ public class Rest {
         this.handler = handler;
     }
 
-    @PostMapping
-    public ResponseEntity<ResponseDTO> getAccountById(@RequestBody GetAccountDTO dto) {
-
-        ResponseDTO responseDTO = handler.getAccountById(dto);
-
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-    }
+//    @PostMapping
+//    public ResponseEntity<ResponseDTO> getAccountById(@RequestBody GetAccountDTO dto) {
+//
+//        ResponseDTO responseDTO = handler.getAccountById(dto);
+//
+//        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+//    }
 
 }

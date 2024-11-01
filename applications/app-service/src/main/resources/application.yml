@@ -33,18 +33,11 @@ spring:
     driver-class-name: org.postgresql.Driver
     jpa:
       database-platform: org.hibernate.dialect.PostgreSQLDialect
-#      hibernate:
-#        ddl-auto: update
       show-sql: true
       properties:
         hibernate:
           format_sql: true
-#  jpa:
-#    show-sql: true
-#  datasource:
-#    url: ${DB_CONNECTION:jdbc:mysql://localhost:3306/banco?useMysqlMetadata=true&serverTimezone=America/Guayaquil&allowPublicKeyRetrieval=false}
-#    username: ${DB_USER:pablo}
-#    password: ${DB_PWD:12qwaszx}
+
   devtools:
     restart:
       enabled: true
@@ -52,13 +45,8 @@ spring:
   application:
     name: banktransaction
 
-#liquibase:
-#  change-log: classpath:db/changelog/db.changelog-master.yaml
-
-hikari:
-  url: ${DB_CONNECTION:jdbc:mysql://localhost:3306/banco?useMysqlMetadata=true&serverTimezone=America/Guayaquil&allowPublicKeyRetrieval=false}
-  username: ${DB_USER:pablo}
-  password: ${DB_PWD:12qwaszx}
+clave:
+  secret: 9QLnICHZ0hgfJz4oKkFfGEB7YeYt4bn3m6w3LUH1XQw
 
 logging:
   level:
