@@ -61,7 +61,7 @@ public class RegisterTransactionDepositSucursalHandler {
         TransactionAccountDetail transactionAccountDetail = new TransactionAccountDetail();
         transactionAccountDetail.setAccount(account);
         transactionAccountDetail.setTransaction(save);
-        transactionAccountDetail.setTransactionRole("CREDIT");
+        transactionAccountDetail.setTransactionRole("Supplier");
 
         transactionAccountDetailRepository.save(transactionAccountDetail);
 

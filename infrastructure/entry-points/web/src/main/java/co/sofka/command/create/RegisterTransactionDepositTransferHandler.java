@@ -74,7 +74,7 @@ public class RegisterTransactionDepositTransferHandler {
         TransactionAccountDetail transactionAccountDetail = new TransactionAccountDetail();
         transactionAccountDetail.setAccount(accountSend);
         transactionAccountDetail.setTransaction(save);
-        transactionAccountDetail.setTransactionRole("DEBIT");
+        transactionAccountDetail.setTransactionRole("Payroll");
 
         transactionAccountDetailRepository.save(transactionAccountDetail);
 
@@ -82,7 +82,7 @@ public class RegisterTransactionDepositTransferHandler {
         TransactionAccountDetail transactionAccountDetailCredit = new TransactionAccountDetail();
         transactionAccountDetailCredit.setAccount(accountReciver);
         transactionAccountDetailCredit.setTransaction(save);
-        transactionAccountDetailCredit.setTransactionRole("CREDIT");
+        transactionAccountDetailCredit.setTransactionRole("Supplier");
 
         transactionAccountDetailRepository.save(transactionAccountDetailCredit);
 
