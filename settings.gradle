@@ -4,6 +4,7 @@ include ':app-service'
 include ':model'
 include ':use-cases'
 include ':mysql-repository'
+include ':mongo-repository'
 include ':web'
 
 findProject(':app-service').projectDir = file('./applications/app-service')
@@ -11,4 +12,5 @@ findProject(':model').projectDir = file('./domain/model')
 findProject(':use-cases').projectDir = file('./domain/usecases')
 findProject(':mysql-repository').projectDir = file('./infrastructure/driven-adapters/mysql-repository')
 findProject(':web').projectDir = file('./infrastructure/entry-points/web')
+findProject(':mongo-repository').projectDir = file('./infrastructure/driven-adapters/mongo-repository')
 

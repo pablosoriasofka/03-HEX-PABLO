@@ -27,12 +27,18 @@ public class TransactionAccountDetailRepository implements ITransactionAccountDe
 
     private final JpaTransactionAccountDetailRepository repository;
 
+    private final TransactionRepository transactionRepository;
+
 
     @Transactional
     @Override
     public TransactionAccountDetail save(TransactionAccountDetail id) {
         TransactionAccountDetailEntity transactionEntity = toTransactionAccountDetailEntity(id);
         logger.info("TransactionEntity: "+transactionEntity.getAccount().getId());
+
+        Transaction save1 = transactionRepository.save(id.getTransaction());
+        id.setTransaction(save1);
+
         TransactionAccountDetailEntity save = repository.save(transactionEntity);
         repository.flush();
         return toTransaction(save);

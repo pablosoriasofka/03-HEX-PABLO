@@ -55,12 +55,12 @@ public class RegisterTransactionDepositSucursalHandler {
         transaction.setTimeStamp(LocalDateTime.now());
         transaction.setTypeTransaction("Deposito Sucursal");
 
-        Transaction save = saveTransactionService.save(transaction);
+        //Transaction save = saveTransactionService.save(transaction);
 
 
         TransactionAccountDetail transactionAccountDetail = new TransactionAccountDetail();
         transactionAccountDetail.setAccount(account);
-        transactionAccountDetail.setTransaction(save);
+        transactionAccountDetail.setTransaction(transaction);
         transactionAccountDetail.setTransactionRole("Supplier");
 
         transactionAccountDetailRepository.save(transactionAccountDetail);
@@ -70,6 +70,6 @@ public class RegisterTransactionDepositSucursalHandler {
         saveAccountService.save(account);
 
 
-        return save;
+        return transaction;
     }
 }

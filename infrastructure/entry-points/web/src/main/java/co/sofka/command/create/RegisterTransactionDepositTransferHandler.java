@@ -68,12 +68,12 @@ public class RegisterTransactionDepositTransferHandler {
         transaction.setTimeStamp(LocalDateTime.now());
         transaction.setTypeTransaction("Transferencia");
 
-        Transaction save = saveTransactionService.save(transaction);
+        //Transaction save = saveTransactionService.save(transaction);
 
 
         TransactionAccountDetail transactionAccountDetail = new TransactionAccountDetail();
         transactionAccountDetail.setAccount(accountSend);
-        transactionAccountDetail.setTransaction(save);
+        transactionAccountDetail.setTransaction(transaction);
         transactionAccountDetail.setTransactionRole("Payroll");
 
         transactionAccountDetailRepository.save(transactionAccountDetail);
@@ -81,7 +81,7 @@ public class RegisterTransactionDepositTransferHandler {
 
         TransactionAccountDetail transactionAccountDetailCredit = new TransactionAccountDetail();
         transactionAccountDetailCredit.setAccount(accountReciver);
-        transactionAccountDetailCredit.setTransaction(save);
+        transactionAccountDetailCredit.setTransaction(transaction);
         transactionAccountDetailCredit.setTransactionRole("Supplier");
 
         transactionAccountDetailRepository.save(transactionAccountDetailCredit);
@@ -95,6 +95,6 @@ public class RegisterTransactionDepositTransferHandler {
 
 
 
-        return save;
+        return transaction;
     }
 }

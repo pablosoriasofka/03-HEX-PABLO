@@ -58,12 +58,12 @@ public class RegisterTransactionWithDrawFromATMHandler {
         transaction.setTimeStamp(LocalDateTime.now());
         transaction.setTypeTransaction("ATM");
 
-        Transaction save = saveTransactionService.save(transaction);
+        //Transaction save = saveTransactionService.save(transaction);
 
 
         TransactionAccountDetail transactionAccountDetail = new TransactionAccountDetail();
         transactionAccountDetail.setAccount(account);
-        transactionAccountDetail.setTransaction(save);
+        transactionAccountDetail.setTransaction(transaction);
         transactionAccountDetail.setTransactionRole("Supplier");
 
         transactionAccountDetailRepository.save(transactionAccountDetail);
@@ -73,6 +73,6 @@ public class RegisterTransactionWithDrawFromATMHandler {
         saveAccountService.save(account);
 
 
-        return save;
+        return transaction;
     }
 }
