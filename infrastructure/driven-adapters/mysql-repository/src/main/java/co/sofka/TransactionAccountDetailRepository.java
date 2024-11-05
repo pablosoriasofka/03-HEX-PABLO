@@ -34,7 +34,6 @@ public class TransactionAccountDetailRepository implements ITransactionAccountDe
     @Override
     public TransactionAccountDetail save(TransactionAccountDetail id) {
 
-
         Transaction save1 = transactionRepository.save(id.getTransaction());
         id.setTransaction(save1);
 
