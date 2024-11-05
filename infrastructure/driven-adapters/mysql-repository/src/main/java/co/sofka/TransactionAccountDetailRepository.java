@@ -33,11 +33,13 @@ public class TransactionAccountDetailRepository implements ITransactionAccountDe
     @Transactional
     @Override
     public TransactionAccountDetail save(TransactionAccountDetail id) {
-        TransactionAccountDetailEntity transactionEntity = toTransactionAccountDetailEntity(id);
-        logger.info("TransactionEntity: "+transactionEntity.getAccount().getId());
+
 
         Transaction save1 = transactionRepository.save(id.getTransaction());
         id.setTransaction(save1);
+
+        TransactionAccountDetailEntity transactionEntity = toTransactionAccountDetailEntity(id);
+        logger.info("TransactionEntity: "+transactionEntity.getAccount().getId());
 
         TransactionAccountDetailEntity save = repository.save(transactionEntity);
         repository.flush();
@@ -73,6 +75,7 @@ public class TransactionAccountDetailRepository implements ITransactionAccountDe
         transaction.setTransaction(transactionEntity);
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setId(Long.parseLong(customerEntity.getAccount().getId()));
+
         transaction.setAccount(accountEntity);
         if(customerEntity.getId() != null){
             transaction.setId(Long.parseLong(customerEntity.getId()));
