@@ -26,12 +26,6 @@ public class ServiceAPIErrorHandler {
 
 
 
-    @ExceptionHandler(value = {NoSuchElementException.class})
-    public ResponseEntity<Object> noSuchElementException(NoSuchElementException ex, WebRequest request) {
-        ErrorMessage errorMessage = new ErrorMessage(new Date(), HttpStatus.BAD_REQUEST.toString(), ex.getMessage());
-        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(value = {ErrorDecryptingDataException.class})
     public ResponseEntity<Object> ErrorDecryptingDataException(ErrorDecryptingDataException ex, WebRequest request) {
         ResponseMs<Account> responseMs = new ResponseMs<>();
