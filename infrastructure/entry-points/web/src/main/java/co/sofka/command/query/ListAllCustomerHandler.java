@@ -1,6 +1,5 @@
 package co.sofka.command.query;
 
-import co.sofka.Account;
 import co.sofka.Customer;
 import co.sofka.command.dto.AccountDTO;
 import co.sofka.command.dto.CustomerDTO;
@@ -9,16 +8,13 @@ import co.sofka.command.dto.response.DinError;
 import co.sofka.command.dto.response.ResponseMs;
 import co.sofka.config.EncryptionAndDescryption;
 import co.sofka.config.TokenByDinHeaders;
-import co.sofka.crypto.Utils;
 import co.sofka.middleware.ErrorDecryptingDataException;
-import co.sofka.usecase.IGetAllCustomerService;
 import co.sofka.usecase.IGetAllCustomerService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
