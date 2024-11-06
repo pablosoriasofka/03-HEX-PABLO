@@ -8,10 +8,13 @@ import co.sofka.command.dto.BankTransactionDepositTransfer;
 import co.sofka.command.dto.request.RequestMs;
 import co.sofka.command.dto.response.DinError;
 import co.sofka.command.dto.response.ResponseMs;
+import co.sofka.config.EncryptionAndDescryption;
+import co.sofka.config.TokenByDinHeaders;
 import co.sofka.crypto.Utils;
 import co.sofka.gateway.ITransactionAccountDetailRepository;
 import co.sofka.middleware.AccountNotExistException;
 import co.sofka.middleware.AccountNotHaveBalanceException;
+import co.sofka.middleware.ErrorDecryptingDataException;
 import co.sofka.usecase.IGetAccountByNumberService;
 import co.sofka.usecase.ISaveAccountService;
 import co.sofka.usecase.ISaveTransactionService;
@@ -37,52 +40,68 @@ public class RegisterTransactionDepositTransferHandler {
 
     private final ITransactionAccountDetailRepository transactionAccountDetailRepository;
 
-   private final Utils utils;
+    private final TokenByDinHeaders utils;
 
-    public ResponseMs<Transaction> apply(RequestMs<BankTransactionDepositTransfer> item) {
+    private EncryptionAndDescryption encryptionAndDescryption;
+
+    public ResponseMs<Transaction> apply(RequestMs<BankTransactionDepositTransfer> request) {
 
         ResponseMs<Transaction> responseMs = new ResponseMs<>();
-        responseMs.setDinHeader(item.getDinHeader());
+        responseMs.setDinHeader(request.getDinHeader());
         DinError error = new DinError();
         responseMs.setDinError(error);
+
+        String LlaveSimetrica = "";
+        try{
+            LlaveSimetrica = utils.decode(request.getDinHeader().getLlaveSimetrica());
+        } catch (Exception e) {
+            throw new ErrorDecryptingDataException("Error al desencriptar la LlaveSimetrica.", request.getDinHeader(),1001);
+        }
+
+        String vectorInicializacion = "";
+        try{
+            vectorInicializacion = utils.decode(request.getDinHeader().getVectorInicializacion());
+        } catch (Exception e) {
+            throw new ErrorDecryptingDataException("Error al desencriptar la vectorInicializacion.", request.getDinHeader(),1001);
+        }
 
         logger.info("Buscando Account por numero");
         String decode = "";
         try {
-            decode = utils.decode(item.getDinBody().getAccountNumberSender());
+            decode = encryptionAndDescryption.decryptAes(request.getDinBody().getAccountNumberSender(),vectorInicializacion,LlaveSimetrica);
         } catch (Exception e) {
-            throw new AccountNotExistException("Error al desencriptar el numero de cuenta.", item.getDinHeader(),1001);
+            throw new AccountNotExistException("Error al desencriptar el numero de cuenta.", request.getDinHeader(),1001);
         }
         logger.info("Buscando Account por numero: "+decode);
 
         Account accountSend = service.findByNumber(decode);
 
         if (accountSend==null){
-            throw new AccountNotExistException("La cuenta Origen no existe", item.getDinHeader(),1002);
+            throw new AccountNotExistException("La cuenta Origen no existe", request.getDinHeader(),1002);
         }
 
         String decodeReciver = "";
         try {
-            decodeReciver = utils.decode(item.getDinBody().getAccountNumberReceiver());
+            decodeReciver = encryptionAndDescryption.decryptAes(request.getDinBody().getAccountNumberReceiver(),vectorInicializacion,LlaveSimetrica);
         } catch (Exception e) {
-            throw new AccountNotExistException("Error al desencriptar el numero de cuenta.", item.getDinHeader(),1001);
+            throw new AccountNotExistException("Error al desencriptar el numero de cuenta.", request.getDinHeader(),1001);
         }
         logger.info("Buscando Account por numero: "+decodeReciver);
         Account accountReciver = service.findByNumber(decodeReciver);
 
         if (accountReciver==null){
-            throw new AccountNotExistException("La cuenta Destino no existe", item.getDinHeader(),1002);
+            throw new AccountNotExistException("La cuenta Destino no existe", request.getDinHeader(),1002);
         }
 
-        if (accountSend.getAmount().subtract(item.getDinBody().getAmount().add(new BigDecimal(1.5))).intValue() < 0) {
-            throw new AccountNotHaveBalanceException("No tiene saldo suficiente.", item.getDinHeader(),1003);
+        if (accountSend.getAmount().subtract(request.getDinBody().getAmount().add(new BigDecimal(1.5))).intValue() < 0) {
+            throw new AccountNotHaveBalanceException("No tiene saldo suficiente.", request.getDinHeader(),1003);
         }
 
         logger.info("Guardando Transaccion {}",accountReciver.getCustomer().getId());
 
         Transaction transaction = new Transaction();
         transaction.setTransactionCost(new BigDecimal(1.5));
-        transaction.setAmountTransaction(item.getDinBody().getAmount());
+        transaction.setAmountTransaction(request.getDinBody().getAmount());
         transaction.setTimeStamp(LocalDateTime.now());
         transaction.setTypeTransaction("Transferencia");
 
@@ -104,10 +123,10 @@ public class RegisterTransactionDepositTransferHandler {
 
         transactionAccountDetailRepository.save(transactionAccountDetailCredit);
 
-        accountReciver.setAmount(accountReciver.getAmount().add(item.getDinBody().getAmount()));
+        accountReciver.setAmount(accountReciver.getAmount().add(request.getDinBody().getAmount()));
         saveAccountService.save(accountReciver);
 
-        accountSend.setAmount(accountSend.getAmount().subtract(item.getDinBody().getAmount().add(new BigDecimal(1.5))));
+        accountSend.setAmount(accountSend.getAmount().subtract(request.getDinBody().getAmount().add(new BigDecimal(1.5))));
         saveAccountService.save(accountSend);
 
 

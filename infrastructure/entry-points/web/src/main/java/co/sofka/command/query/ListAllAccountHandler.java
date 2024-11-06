@@ -5,7 +5,10 @@ import co.sofka.command.dto.CustomerDTO;
 import co.sofka.command.dto.request.RequestMs;
 import co.sofka.command.dto.response.DinError;
 import co.sofka.command.dto.response.ResponseMs;
+import co.sofka.config.EncryptionAndDescryption;
+import co.sofka.config.TokenByDinHeaders;
 import co.sofka.crypto.Utils;
+import co.sofka.middleware.ErrorDecryptingDataException;
 import co.sofka.usecase.IGetAllAccountService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -23,32 +26,41 @@ public class ListAllAccountHandler {
 
     private final IGetAllAccountService service;
 
-   private final Utils utils;
+    private final TokenByDinHeaders utils;
+
+    private EncryptionAndDescryption encryptionAndDescryption;
 
     public ResponseMs<List<Account>> getAll(RequestMs<Void> request) {
 
         ResponseMs<List<Account>> responseMs = new ResponseMs<>();
         responseMs.setDinHeader(request.getDinHeader());
         DinError error = new DinError();
+        responseMs.setDinError(error);
 
-        try {
         List<Account> all = service.getAll();
 
         all=all.stream().map(account -> {
-            account.setNumber(utils.encode(account.getNumber()));
+
+            String LlaveSimetrica = "";
+            try{
+                LlaveSimetrica = utils.decode(request.getDinHeader().getLlaveSimetrica());
+            } catch (Exception e) {
+                throw new ErrorDecryptingDataException("Error al desencriptar la LlaveSimetrica.", request.getDinHeader(),1001);
+            }
+
+            String vectorInicializacion = "";
+            try{
+                vectorInicializacion = utils.decode(request.getDinHeader().getVectorInicializacion());
+            } catch (Exception e) {
+                throw new ErrorDecryptingDataException("Error al desencriptar la vectorInicializacion.", request.getDinHeader(),1001);
+            }
+
+            account.setNumber(encryptionAndDescryption.encriptAes(account.getNumber(),vectorInicializacion,LlaveSimetrica));
             return account;
         }).toList();
-        } catch (Exception e) {
-            logger.error("Error al buscar todos los Customer", e);
-            error.setMensaje(e.getMessage());
-            error.setCodigo(String.valueOf(e.hashCode()));
-            error.setFecha(LocalDateTime.now().toString());
-            error.setTipo("ERROR");
-            responseMs.setDinError(error);
-            return responseMs;
-        }
 
-        responseMs.setDinError(error);
+
+        responseMs.setDinBody(all);
 
 
         return responseMs;

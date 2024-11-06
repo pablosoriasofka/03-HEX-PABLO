@@ -7,7 +7,10 @@ import co.sofka.command.dto.CustomerDTO;
 import co.sofka.command.dto.request.RequestMs;
 import co.sofka.command.dto.response.DinError;
 import co.sofka.command.dto.response.ResponseMs;
+import co.sofka.config.EncryptionAndDescryption;
+import co.sofka.config.TokenByDinHeaders;
 import co.sofka.crypto.Utils;
+import co.sofka.middleware.ErrorDecryptingDataException;
 import co.sofka.usecase.IGetAllCustomerService;
 import co.sofka.usecase.IGetAllCustomerService;
 import lombok.AllArgsConstructor;
@@ -27,7 +30,9 @@ public class ListAllCustomerHandler {
 
     private final IGetAllCustomerService service;
 
-   private final Utils utils;
+    private final TokenByDinHeaders utils;
+
+    private EncryptionAndDescryption encryptionAndDescryption;
 
     public ResponseMs<List<CustomerDTO>> getAll(RequestMs<Void> request) {
 
@@ -35,7 +40,7 @@ public class ListAllCustomerHandler {
         responseMs.setDinHeader(request.getDinHeader());
         DinError error = new DinError();
 
-        try {
+
 
             List<Customer> all = service.getAll();
 
@@ -49,7 +54,22 @@ public class ListAllCustomerHandler {
                     List<AccountDTO> list = account.getAccounts().stream().map(account1 -> {
                         AccountDTO accountDTO = new AccountDTO();
                         logger.info("Account number: "+account1.getNumber());
-                        accountDTO.setNumber(utils.encode(account1.getNumber()));
+
+                        String LlaveSimetrica = "";
+                        try{
+                            LlaveSimetrica = utils.decode(request.getDinHeader().getLlaveSimetrica());
+                        } catch (Exception e) {
+                            throw new ErrorDecryptingDataException("Error al desencriptar la LlaveSimetrica.", request.getDinHeader(),1001);
+                        }
+
+                        String vectorInicializacion = "";
+                        try{
+                            vectorInicializacion = utils.decode(request.getDinHeader().getVectorInicializacion());
+                        } catch (Exception e) {
+                            throw new ErrorDecryptingDataException("Error al desencriptar la vectorInicializacion.", request.getDinHeader(),1001);
+                        }
+
+                        accountDTO.setNumber(encryptionAndDescryption.encriptAes(account1.getNumber(),vectorInicializacion,LlaveSimetrica));
                         accountDTO.setAmount(account1.getAmount());
                         return accountDTO;
                     }).toList();
@@ -59,21 +79,7 @@ public class ListAllCustomerHandler {
                 return customerDTO;
             }).toList();
 
-
-
             responseMs.setDinBody(response);
-
-
-
-        } catch (Exception e) {
-            logger.error("Error al buscar todos los Customer", e);
-            error.setMensaje(e.getMessage());
-            error.setCodigo(String.valueOf(e.hashCode()));
-            error.setFecha(LocalDateTime.now().toString());
-            error.setTipo("ERROR");
-            responseMs.setDinError(error);
-            return responseMs;
-        }
 
         responseMs.setDinError(error);
 

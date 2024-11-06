@@ -8,6 +8,8 @@ import co.sofka.command.dto.BankTransactionWithdrawFromATM;
 import co.sofka.command.dto.request.RequestMs;
 import co.sofka.command.dto.response.DinError;
 import co.sofka.command.dto.response.ResponseMs;
+import co.sofka.config.EncryptionAndDescryption;
+import co.sofka.config.TokenByDinHeaders;
 import co.sofka.crypto.Utils;
 import co.sofka.gateway.ITransactionAccountDetailRepository;
 import co.sofka.middleware.AccountNotExistException;
@@ -38,34 +40,53 @@ public class RegisterTransactionDepositSucursalHandler {
 
     private final ITransactionAccountDetailRepository transactionAccountDetailRepository;
 
-   private final Utils utils;
+    private final TokenByDinHeaders utils;
 
-    public ResponseMs<Transaction> apply(RequestMs<BankTransactionDepositSucursal> bankTransactionWithdrawFromATM) {
+    private EncryptionAndDescryption encryptionAndDescryption;
+
+    public ResponseMs<Transaction> apply(RequestMs<BankTransactionDepositSucursal> request) {
 
         ResponseMs<Transaction> responseMs = new ResponseMs<>();
-        responseMs.setDinHeader(bankTransactionWithdrawFromATM.getDinHeader());
+        responseMs.setDinHeader(request.getDinHeader());
         DinError error = new DinError();
         responseMs.setDinError(error);
+
+        String LlaveSimetrica = "";
+        try{
+            LlaveSimetrica = utils.decode(request.getDinHeader().getLlaveSimetrica());
+        } catch (Exception e) {
+            throw new ErrorDecryptingDataException("Error al desencriptar la LlaveSimetrica.", request.getDinHeader(),1001);
+        }
+
+        String vectorInicializacion = "";
+        try{
+            vectorInicializacion = utils.decode(request.getDinHeader().getVectorInicializacion());
+        } catch (Exception e) {
+            throw new ErrorDecryptingDataException("Error al desencriptar la vectorInicializacion.", request.getDinHeader(),1001);
+        }
+
+
+
 
         logger.info("Buscando Account por numero");
         String decode = "";
         try{
-            decode = utils.decode(bankTransactionWithdrawFromATM.getDinBody().getAccountNumberClient());
+            decode = encryptionAndDescryption.decryptAes(request.getDinBody().getAccountNumberClient(),vectorInicializacion,LlaveSimetrica);
         } catch (Exception e) {
-            throw new ErrorDecryptingDataException("Error al desencriptar el numero de cuenta.", bankTransactionWithdrawFromATM.getDinHeader(),1001);
+            throw new ErrorDecryptingDataException("Error al desencriptar el numero de cuenta.", request.getDinHeader(),1001);
         }
         logger.info("Buscando Account por numero: "+decode);
 
         Account account = service.findByNumber(decode);
 
         if (account==null){
-            throw new AccountNotExistException("La cuenta no existe", bankTransactionWithdrawFromATM.getDinHeader(),1002);
+            throw new AccountNotExistException("La cuenta no existe", request.getDinHeader(),1002);
         }
 
 
         Transaction transaction = new Transaction();
         transaction.setTransactionCost(new BigDecimal(0));
-        transaction.setAmountTransaction(bankTransactionWithdrawFromATM.getDinBody().getAmount());
+        transaction.setAmountTransaction(request.getDinBody().getAmount());
         transaction.setTimeStamp(LocalDateTime.now());
         transaction.setTypeTransaction("Deposito Sucursal");
 
@@ -80,7 +101,7 @@ public class RegisterTransactionDepositSucursalHandler {
         transactionAccountDetailRepository.save(transactionAccountDetail);
 
 
-        account.setAmount(account.getAmount().add(bankTransactionWithdrawFromATM.getDinBody().getAmount()));
+        account.setAmount(account.getAmount().add(request.getDinBody().getAmount()));
         saveAccountService.save(account);
 
         responseMs.setDinBody(transaction);
