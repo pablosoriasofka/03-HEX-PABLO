@@ -1,6 +1,9 @@
 package co.sofka;
 
 
+import co.sofka.command.dto.request.AccountFindRequest;
+import co.sofka.command.dto.request.RequestMs;
+import co.sofka.command.dto.response.ResponseMs;
 import co.sofka.command.query.FindAccountByNumberHandler;
 import co.sofka.command.query.ListAllAccountHandler;
 import co.sofka.data.ResponseAPI;
@@ -29,20 +32,16 @@ public class AccountController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<ResponseAPI<List<Account>>> getAll() {
+    public ResponseEntity<ResponseMs<List<Account>>> getAll(@RequestBody RequestMs<Void> request) {
         logger.info("Buscando todos los Account");
-        return new ResponseEntity<>( ResponseAPI.<List<Account>>builder().bodyOut(handler.getAll())
-                .message("Account encontrados").code(HttpStatus.OK.value())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity<>( handler.getAll(request), HttpStatus.OK);
     }
 
 
     @GetMapping("/byNumber")
-    public ResponseEntity<ResponseAPI<Account>> getByNumber(@RequestParam String number) {
-        logger.info("Buscando todos los Account");
-        return new ResponseEntity<>( ResponseAPI.<Account>builder().bodyOut(findAccountByNumberHandler.findByNumber(number))
-                .message("Account encontrados").code(HttpStatus.OK.value())
-                .build(), HttpStatus.OK);
+    public ResponseEntity<ResponseMs<Account>> getByNumber(@RequestBody RequestMs<AccountFindRequest> request) {
+        logger.info("Buscando todos los Account por numero");
+        return new ResponseEntity<>( findAccountByNumberHandler.findByNumber(request), HttpStatus.OK);
     }
 
 

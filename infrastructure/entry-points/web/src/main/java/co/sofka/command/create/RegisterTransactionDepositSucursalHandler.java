@@ -5,10 +5,14 @@ import co.sofka.Transaction;
 import co.sofka.TransactionAccountDetail;
 import co.sofka.command.dto.BankTransactionDepositSucursal;
 import co.sofka.command.dto.BankTransactionWithdrawFromATM;
+import co.sofka.command.dto.request.RequestMs;
+import co.sofka.command.dto.response.DinError;
+import co.sofka.command.dto.response.ResponseMs;
 import co.sofka.crypto.Utils;
 import co.sofka.gateway.ITransactionAccountDetailRepository;
 import co.sofka.middleware.AccountNotExistException;
 import co.sofka.middleware.AccountNotHaveBalanceException;
+import co.sofka.middleware.ErrorDecryptingDataException;
 import co.sofka.usecase.IGetAccountByNumberService;
 import co.sofka.usecase.ISaveAccountService;
 import co.sofka.usecase.ISaveTransactionService;
@@ -36,22 +40,31 @@ public class RegisterTransactionDepositSucursalHandler {
 
    private final Utils utils;
 
-    public Transaction apply(BankTransactionDepositSucursal bankTransactionWithdrawFromATM) {
+    public ResponseMs<Transaction> apply(RequestMs<BankTransactionDepositSucursal> bankTransactionWithdrawFromATM) {
+
+        ResponseMs<Transaction> responseMs = new ResponseMs<>();
+        responseMs.setDinHeader(bankTransactionWithdrawFromATM.getDinHeader());
+        DinError error = new DinError();
 
         logger.info("Buscando Account por numero");
-        String decode = utils.decode(bankTransactionWithdrawFromATM.getAccountNumberClient());
+        String decode = "";
+        try{
+            decode = utils.decode(bankTransactionWithdrawFromATM.getDinBody().getAccountNumberClient());
+        } catch (Exception e) {
+            throw new ErrorDecryptingDataException("Error al desencriptar el numero de cuenta.", bankTransactionWithdrawFromATM.getDinHeader(),1001);
+        }
         logger.info("Buscando Account por numero: "+decode);
 
         Account account = service.findByNumber(decode);
 
         if (account==null){
-            throw new AccountNotExistException("La cuenta no existe");
+            throw new AccountNotExistException("La cuenta no existe", bankTransactionWithdrawFromATM.getDinHeader(),1002);
         }
 
 
         Transaction transaction = new Transaction();
         transaction.setTransactionCost(new BigDecimal(0));
-        transaction.setAmountTransaction(bankTransactionWithdrawFromATM.getAmount());
+        transaction.setAmountTransaction(bankTransactionWithdrawFromATM.getDinBody().getAmount());
         transaction.setTimeStamp(LocalDateTime.now());
         transaction.setTypeTransaction("Deposito Sucursal");
 
@@ -66,10 +79,10 @@ public class RegisterTransactionDepositSucursalHandler {
         transactionAccountDetailRepository.save(transactionAccountDetail);
 
 
-        account.setAmount(account.getAmount().add(bankTransactionWithdrawFromATM.getAmount()));
+        account.setAmount(account.getAmount().add(bankTransactionWithdrawFromATM.getDinBody().getAmount()));
         saveAccountService.save(account);
 
 
-        return transaction;
+        return responseMs;
     }
 }

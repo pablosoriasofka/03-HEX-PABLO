@@ -2,6 +2,8 @@ package co.sofka;
 
 
 import co.sofka.command.dto.CustomerDTO;
+import co.sofka.command.dto.request.RequestMs;
+import co.sofka.command.dto.response.ResponseMs;
 import co.sofka.command.query.ListAllCustomerHandler;
 import co.sofka.data.ResponseAPI;
 import co.sofka.usecase.IGetAllCustomerService;
@@ -10,10 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,11 +28,9 @@ public class CustomerController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<ResponseAPI<List<CustomerDTO>>> getAll() {
+    public ResponseEntity<ResponseMs<List<CustomerDTO>>> getAll(@RequestBody RequestMs<Void> request) {
         logger.info("Buscando todos los Customer");
-        return new ResponseEntity<>( ResponseAPI.<List<CustomerDTO>>builder().bodyOut(handler.getAll())
-                .message("Customer encontrados").code(HttpStatus.OK.value())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity<>( handler.getAll(request), HttpStatus.OK);
     }
 
 

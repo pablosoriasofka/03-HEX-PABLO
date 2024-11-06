@@ -7,6 +7,8 @@ import co.sofka.command.create.RegisterTransactionWithDrawFromATMHandler;
 import co.sofka.command.dto.BankTransactionDepositSucursal;
 import co.sofka.command.dto.BankTransactionDepositTransfer;
 import co.sofka.command.dto.BankTransactionWithdrawFromATM;
+import co.sofka.command.dto.request.RequestMs;
+import co.sofka.command.dto.response.ResponseMs;
 import co.sofka.data.ResponseAPI;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -32,28 +34,22 @@ public class TransactionController {
 
 
     @PostMapping("/retitarCajero")
-    public ResponseEntity<ResponseAPI<Transaction>> bankTransactionWithdrawFromATM(@Valid @RequestBody BankTransactionWithdrawFromATM bankTransaction) {
+    public ResponseEntity<ResponseMs<Transaction>> bankTransactionWithdrawFromATM(@Valid @RequestBody RequestMs<BankTransactionWithdrawFromATM> bankTransaction) {
         logger.info("Guardando transaccion bancaria");
-        return new ResponseEntity<>( ResponseAPI.<Transaction>builder().bodyOut(handler.withdrawFromATM(bankTransaction))
-                .message("Transaccion bancaria guardada").code(HttpStatus.OK.value())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity<>(handler.withdrawFromATM(bankTransaction), HttpStatus.OK);
     }
 
     @PostMapping("/deposit")
-    public ResponseEntity<ResponseAPI<Transaction>> bankTransactionDeposit(@Valid @RequestBody BankTransactionDepositSucursal item) {
+    public ResponseEntity<ResponseMs<Transaction>> bankTransactionDeposit(@Valid @RequestBody RequestMs<BankTransactionDepositSucursal> item) {
         logger.info("Guardando transaccion bancaria");
-        return new ResponseEntity<>( ResponseAPI.<Transaction>builder().bodyOut(handlerDeposit.apply(item))
-                .message("Transaccion bancaria guardada").code(HttpStatus.OK.value())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity<>( handlerDeposit.apply(item), HttpStatus.OK);
     }
 
 
     @PostMapping("/depositTrasfer")
-    public ResponseEntity<ResponseAPI<Transaction>> bankTransactionDepositTrasfer(@Valid @RequestBody BankTransactionDepositTransfer item) {
+    public ResponseEntity<ResponseMs<Transaction>> bankTransactionDepositTrasfer(@Valid @RequestBody RequestMs<BankTransactionDepositTransfer> item) {
         logger.info("Guardando transaccion bancaria");
-        return new ResponseEntity<>( ResponseAPI.<Transaction>builder().bodyOut(handlerTransfer.apply(item))
-                .message("Transaccion bancaria guardada").code(HttpStatus.OK.value())
-                .build(), HttpStatus.OK);
+        return new ResponseEntity<>( handlerTransfer.apply(item), HttpStatus.OK);
     }
 
 

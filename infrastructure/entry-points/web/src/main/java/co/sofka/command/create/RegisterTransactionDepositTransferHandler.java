@@ -5,6 +5,9 @@ import co.sofka.Transaction;
 import co.sofka.TransactionAccountDetail;
 import co.sofka.command.dto.BankTransactionDepositSucursal;
 import co.sofka.command.dto.BankTransactionDepositTransfer;
+import co.sofka.command.dto.request.RequestMs;
+import co.sofka.command.dto.response.DinError;
+import co.sofka.command.dto.response.ResponseMs;
 import co.sofka.crypto.Utils;
 import co.sofka.gateway.ITransactionAccountDetailRepository;
 import co.sofka.middleware.AccountNotExistException;
@@ -36,35 +39,49 @@ public class RegisterTransactionDepositTransferHandler {
 
    private final Utils utils;
 
-    public Transaction apply(BankTransactionDepositTransfer item) {
+    public ResponseMs<Transaction> apply(RequestMs<BankTransactionDepositTransfer> item) {
+
+        ResponseMs<Transaction> responseMs = new ResponseMs<>();
+        responseMs.setDinHeader(item.getDinHeader());
+        DinError error = new DinError();
 
         logger.info("Buscando Account por numero");
-        String decode = utils.decode(item.getAccountNumberSender());
+        String decode = "";
+        try {
+            decode = utils.decode(item.getDinBody().getAccountNumberSender());
+        } catch (Exception e) {
+            throw new AccountNotExistException("Error al desencriptar el numero de cuenta.", item.getDinHeader(),1001);
+        }
         logger.info("Buscando Account por numero: "+decode);
 
         Account accountSend = service.findByNumber(decode);
 
         if (accountSend==null){
-            throw new AccountNotExistException("La cuenta Origen no existe");
+            throw new AccountNotExistException("La cuenta Origen no existe", item.getDinHeader(),1002);
         }
 
-        String decodeReciver = utils.decode(item.getAccountNumberReceiver());
+        String decodeReciver = "";
+        try {
+            decodeReciver = utils.decode(item.getDinBody().getAccountNumberReceiver());
+        } catch (Exception e) {
+            throw new AccountNotExistException("Error al desencriptar el numero de cuenta.", item.getDinHeader(),1001);
+        }
         logger.info("Buscando Account por numero: "+decodeReciver);
         Account accountReciver = service.findByNumber(decodeReciver);
 
         if (accountReciver==null){
-            throw new AccountNotExistException("La cuenta Destino no existe");
+            throw new AccountNotExistException("La cuenta Destino no existe", item.getDinHeader(),1002);
         }
 
-        if (accountSend.getAmount().subtract(item.getAmount().add(new BigDecimal(1.5))).intValue() < 0) {
-            throw new AccountNotHaveBalanceException("No tiene saldo suficiente.");
+        if (accountSend.getAmount().subtract(item.getDinBody().getAmount().add(new BigDecimal(1.5))).intValue() < 0) {
+            throw new AccountNotHaveBalanceException("No tiene saldo suficiente.", item.getDinHeader(),1003);
         }
 
         logger.info("Guardando Transaccion {}",accountReciver.getCustomer().getId());
 
         Transaction transaction = new Transaction();
         transaction.setTransactionCost(new BigDecimal(1.5));
-        transaction.setAmountTransaction(item.getAmount());
+        transaction.setAmountTransaction(item.getDinBody().getAmount());
         transaction.setTimeStamp(LocalDateTime.now());
         transaction.setTypeTransaction("Transferencia");
 
@@ -86,15 +103,15 @@ public class RegisterTransactionDepositTransferHandler {
 
         transactionAccountDetailRepository.save(transactionAccountDetailCredit);
 
-        accountReciver.setAmount(accountReciver.getAmount().add(item.getAmount()));
+        accountReciver.setAmount(accountReciver.getAmount().add(item.getDinBody().getAmount()));
         saveAccountService.save(accountReciver);
 
-        accountSend.setAmount(accountSend.getAmount().subtract(item.getAmount().add(new BigDecimal(1.5))));
+        accountSend.setAmount(accountSend.getAmount().subtract(item.getDinBody().getAmount().add(new BigDecimal(1.5))));
         saveAccountService.save(accountSend);
 
 
 
 
-        return transaction;
+        return responseMs;
     }
 }
