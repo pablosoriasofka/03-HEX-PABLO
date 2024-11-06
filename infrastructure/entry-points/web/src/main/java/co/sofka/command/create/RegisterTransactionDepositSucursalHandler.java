@@ -82,6 +82,7 @@ public class RegisterTransactionDepositSucursalHandler {
         account.setAmount(account.getAmount().add(bankTransactionWithdrawFromATM.getDinBody().getAmount()));
         saveAccountService.save(account);
 
+        responseMs.setDinBody(transaction);
 
         return responseMs;
     }

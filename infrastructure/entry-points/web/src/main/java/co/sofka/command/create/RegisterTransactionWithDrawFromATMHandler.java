@@ -85,6 +85,7 @@ public class RegisterTransactionWithDrawFromATMHandler {
         account.setAmount(account.getAmount().subtract(bankTransactionWithdrawFromATM.getDinBody().getAmount().add(new BigDecimal(1))));
         saveAccountService.save(account);
 
+        responseMs.setDinBody(transaction);
 
         return responseMs;
     }
