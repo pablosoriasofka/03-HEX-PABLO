@@ -44,6 +44,7 @@ public class RegisterTransactionWithDrawFromATMHandler {
         ResponseMs<Transaction> responseMs = new ResponseMs<>();
         responseMs.setDinHeader(bankTransactionWithdrawFromATM.getDinHeader());
         DinError error = new DinError();
+        responseMs.setDinError(error);
 
         logger.info("Buscando Account por numero");
         String decode = "";

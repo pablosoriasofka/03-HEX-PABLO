@@ -5,17 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class DinError {
 
-    private String tipo;
-    private String fecha;
+    private String tipo= "SUCCESS";
+    private String fecha= LocalDateTime.now().toString();
     private String origen;
-    private String codigo;
-    private String codigoErrorProveedor;
-    private String mensaje;
-    private String detalle;
+    private String codigo= "0";
+    private String codigoErrorProveedor= "0000";
+    private String mensaje= "Operacion exitosa";
+    private String detalle ;
 }
