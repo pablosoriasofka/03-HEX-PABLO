@@ -59,3 +59,28 @@ logging:
         hikari: ERROR
     feign: DEBUG
 
+jwt:
+  expirationDateInMs: '78000000'
+  secret: 'QWASZXERDFCVTYGHBNYUHJNMIOKLWAESRASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCOPINNOQWERTYU'
+
+
+general:
+  config:
+    constans:
+      id: "bancoAPIJWT"
+      authorities: "authorities"
+      BEARER: "Bearer "
+      AUTHORIZATION: "Authorization"
+      headersJWTPartnerLoginID: "identificationNumber"
+      headersJWTPartnerLoginDevice: "identificationDevice"
+      headersJWTPartnerLoginType: "identificationType"
+      SUCCESS: "success"
+      OK: 0
+      ERROR: 500
+
+
+URL:
+  OpenEndpointsRegex: >
+    "/utils/generate",      
+      
+      
