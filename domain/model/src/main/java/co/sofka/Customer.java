@@ -8,6 +8,8 @@ public class Customer {
 
     private String username;
 
+    private String pwd;
+
     private List<Account> accounts;
 
     public Customer(String id, String username, List<Account> accounts) {
@@ -41,5 +43,14 @@ public class Customer {
 
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
+    }
+
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
     }
 }

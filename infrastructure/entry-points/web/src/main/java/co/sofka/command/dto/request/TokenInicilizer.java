@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class TokenInicilizer {
-    private String tokenValue;
+    private String username;
+    private String password;
 }

@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -38,24 +40,24 @@ public class JwtUtils {
 
 
     @Value("${general.config.constans.headersJWTPartnerLoginID}")
-    public String headersJWTPartnerLoginID;
+    public String headersJWTLoginID;
 
     @Value("${general.config.constans.headersJWTPartnerLoginDevice}")
-    public String headersJWTPartnerLoginDevice;
+    public String headersJWTLoginDevice;
 
     @Value("${general.config.constans.headersJWTPartnerLoginType}")
-    public String headersJWTPartnerLoginType;
+    public String headersJWTLoginType;
 
     public String generateJwtToken(LoginPartnerRequest data) {
 
         Map<String, Object> headers = new HashMap<>();
-        headers.put(headersJWTPartnerLoginID, data.getIdentificationNumber());
-        headers.put(headersJWTPartnerLoginDevice, data.getIdentificationDevice());
-        headers.put(headersJWTPartnerLoginType, data.getIdentificationType());
+        headers.put(headersJWTLoginID, data.getUsername());
+        headers.put(headersJWTLoginDevice, data.getRol());
+        headers.put(headersJWTLoginType, "JWT");
 
-        List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN,ROLE_ADMIN,PARTNER,ROLE_PARTNER");
+        List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList(data.getPermisos());
 
-        String token = Jwts.builder().setId(ID).setSubject(data.getIdentificationNumber())
+        String token = Jwts.builder().setId(ID).setSubject(data.getUsername())
                 .setHeaderParams(headers)
                 .claim(AUTHORITIES,grantedAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .setIssuedAt(new Date())
@@ -68,6 +70,20 @@ public class JwtUtils {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+
+    public String encryptionPassword(String passwordActual) {
+
+        PasswordEncoder bCryptPasswordEncoder;
+        bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.encode(passwordActual);
+    }
+
+
+    public Boolean matchesPasswd(String passwordActual, String passwordBD) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.matches(passwordActual, passwordBD);
     }
 
 

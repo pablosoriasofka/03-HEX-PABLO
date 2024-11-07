@@ -18,6 +18,8 @@ public class CustomerEntity {
 
     private String username;
 
+    private String pwd;
+
     @Column(name = "created_at")
     private LocalDate createdAt;
 

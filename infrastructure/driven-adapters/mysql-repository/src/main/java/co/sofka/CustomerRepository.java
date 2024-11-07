@@ -33,7 +33,8 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public Customer findByUsername(String username) {
-        return null;
+        CustomerEntity byUsername = repository.findByUsername(username);
+        return toCustomer(byUsername);
     }
 
     @Override
@@ -49,6 +50,7 @@ public class CustomerRepository implements ICustomerRepository {
         Customer customer = new Customer();
         customer.setId(customerEntity.getId().toString());
         customer.setUsername(customerEntity.getUsername());
+        customer.setPwd(customerEntity.getPwd());
 
         List<Account> accounts = new ArrayList<>();
         customerEntity.getAccounts().forEach(accountEntity -> {

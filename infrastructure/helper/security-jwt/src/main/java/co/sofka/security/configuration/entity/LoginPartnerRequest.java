@@ -5,18 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginPartnerRequest {
 
     @NotBlank(message = "El campo número de identificación es requerido.")
-    private String identificationNumber;
+    private String username;
 
     @NotBlank(message = "El campo tipo de identificación es requerido.")
-    private String identificationType;
+    private String rol;
 
     @NotBlank(message = "El campo identificación dispositivo es requerido.")
-    private String identificationDevice;
+    private List<String> permisos;
 
 }

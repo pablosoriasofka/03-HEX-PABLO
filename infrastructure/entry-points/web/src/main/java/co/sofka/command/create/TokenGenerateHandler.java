@@ -1,16 +1,22 @@
 package co.sofka.command.create;
 
+import co.sofka.Customer;
 import co.sofka.command.dto.request.RequestMs;
 import co.sofka.command.dto.request.TokenInicilizer;
 import co.sofka.command.dto.response.DinError;
 import co.sofka.command.dto.response.ResponseMs;
 import co.sofka.config.TokenByDinHeaders;
+import co.sofka.middleware.CustomerNotExistException;
+import co.sofka.middleware.PasswordIncorrectoException;
 import co.sofka.security.configuration.entity.LoginPartnerRequest;
 import co.sofka.security.configuration.jwt.JwtUtils;
+import co.sofka.usecase.IGetCustomerByUserNameService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @AllArgsConstructor
@@ -18,6 +24,7 @@ public class TokenGenerateHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenGenerateHandler.class);
 
+    IGetCustomerByUserNameService getCustomerByUserNameService;
 
    private final TokenByDinHeaders utils;
 
@@ -30,16 +37,32 @@ public class TokenGenerateHandler {
         DinError error = new DinError();
         responseMs.setDinError(error);
 
-        String encode = utils.encode(request.getDinBody().getTokenValue());
+        Customer byUsername = getCustomerByUserNameService.findByUsername(request.getDinBody().getUsername());
+
+        if (byUsername == null) {
+            throw new CustomerNotExistException("Customer no definido para estos parametros.",request.getDinHeader(),1004);
+        }
+
+
+        Boolean b = jwtUtils.matchesPasswd(request.getDinBody().getPassword(), byUsername.getPwd());
+
+        logger.info("Password Matches : {}",b);
+
+        if (!b) {
+            throw new PasswordIncorrectoException("Password Incorrecto",request.getDinHeader(),1005);
+        }
 
         LoginPartnerRequest loginPartnerRequest = new LoginPartnerRequest();
-        loginPartnerRequest.setIdentificationNumber("123456789");
-        loginPartnerRequest.setIdentificationDevice("123456789");
-        loginPartnerRequest.setIdentificationType("123456789");
+        loginPartnerRequest.setUsername(request.getDinBody().getUsername());
+        loginPartnerRequest.setRol("ADMIN");
+        loginPartnerRequest.setPermisos(List.of("WRITE","READ"));
         String tokenString = jwtUtils.generateJwtToken(loginPartnerRequest);
 
         responseMs.setDinBody(tokenString);
 
         return responseMs;
     }
+
+
+
 }
