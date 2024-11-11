@@ -6,6 +6,7 @@ include ':use-cases'
 include ':mysql-repository'
 include ':mongo-repository'
 include ':web'
+include ':web-jwt'
 include ':utils'
 include ':security-jwt'
 
@@ -17,4 +18,5 @@ findProject(':web').projectDir = file('./infrastructure/entry-points/web')
 findProject(':mongo-repository').projectDir = file('./infrastructure/driven-adapters/mongo-repository')
 findProject(':utils').projectDir = file('./infrastructure/helper/utils')
 findProject(':security-jwt').projectDir = file('./infrastructure/helper/security-jwt')
+findProject(':web-jwt').projectDir = file('./infrastructure/entry-points/web-jwt')
 

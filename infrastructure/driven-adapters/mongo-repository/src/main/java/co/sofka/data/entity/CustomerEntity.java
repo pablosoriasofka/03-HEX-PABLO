@@ -17,6 +17,8 @@ public class CustomerEntity {
 
     private String username;
 
+    private String pwd;
+
     @Field(name = "created_at")
     private LocalDate createdAt;
 

@@ -43,6 +43,7 @@ public class JwtTokenUtil  {
 		@SuppressWarnings("unchecked")
 		List<String> authorities = (List) getAllClaimsFromToken(token).get(AUTHORITIES);
 		authorities.stream().map(item ->{
+			logger.info("Authorities: {}", item);
 			return item;
 		}).collect(Collectors.toList());
 		return authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());

@@ -20,9 +20,9 @@ import java.util.*;
 
 @ControllerAdvice
 @ComponentScan(basePackages = "co.com.sofka")
-public class ServiceAPIErrorHandler {
+public class ServiceAPISecurityErrorHandler {
 
-    private static final Logger logger_ = LoggerFactory.getLogger(ServiceAPIErrorHandler.class);
+    private static final Logger logger_ = LoggerFactory.getLogger(ServiceAPISecurityErrorHandler.class);
 
 
 
@@ -43,7 +43,22 @@ public class ServiceAPIErrorHandler {
         return new ResponseEntity<>(responseMs, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = {PasswordIncorrectoException.class})
+    public ResponseEntity<Object> PasswordIncorrectoException(PasswordIncorrectoException ex, WebRequest request) {
+        ResponseMs<Account> responseMs = new ResponseMs<>();
+        responseMs.setDinHeader(ex.getDinHeader());
+        DinError error = new DinError();
 
+        error.setMensaje(ex.getMessage());
+        error.setCodigo(String.valueOf(ex.getCode()));
+        error.setFecha(LocalDateTime.now().toString());
+        error.setTipo("ERROR");
+        error.setOrigen(this.getClass().getName());
+        error.setDetalle(ex.getLocalizedMessage());
+        responseMs.setDinError(error);
+
+        return new ResponseEntity<>(responseMs, new HttpHeaders(), HttpStatus.OK);
+    }
 
 
     @ExceptionHandler(value = {CustomerNotExistException.class})
@@ -81,23 +96,6 @@ public class ServiceAPIErrorHandler {
         return new ResponseEntity<>(responseMs, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
-
-    @ExceptionHandler(AccountNotHaveBalanceException.class)
-    public final ResponseEntity<Object> handleAccountNotHaveBalanceException(AccountNotHaveBalanceException ex, WebRequest request) {
-        ResponseMs<Account> responseMs = new ResponseMs<>();
-        responseMs.setDinHeader(ex.getDinHeader());
-        DinError error = new DinError();
-
-        error.setMensaje(ex.getMessage());
-        error.setCodigo(String.valueOf(ex.getCode()));
-        error.setFecha(LocalDateTime.now().toString());
-        error.setTipo("ERROR");
-        error.setOrigen(this.getClass().getName());
-        error.setDetalle(ex.getLocalizedMessage());
-        responseMs.setDinError(error);
-
-        return new ResponseEntity<>(responseMs, new HttpHeaders(), HttpStatus.NOT_FOUND);
-    }
 
 
 

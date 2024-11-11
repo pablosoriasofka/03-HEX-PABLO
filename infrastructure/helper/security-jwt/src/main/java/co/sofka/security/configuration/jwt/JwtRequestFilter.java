@@ -68,7 +68,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 				UserDetails userDetails = new User(username,generalPass, jwtTokenUtil.getAuthoritiesUsernameFromToken(jwtToken));
 
-				logger.info("Datos del usuario {}, roles",userDetails.getUsername(),userDetails.getAuthorities());
+				logger.info("Datos del usuario {}, roles {}",userDetails.getUsername(),userDetails.getAuthorities());
 
 				if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
 					UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

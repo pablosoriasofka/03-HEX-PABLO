@@ -1,21 +1,15 @@
 package co.sofka;
 
 
-import co.sofka.command.dto.CustomerDTO;
+import co.sofka.command.create.TokenGenerateHandler;
 import co.sofka.command.dto.request.RequestMs;
+import co.sofka.command.dto.request.TokenInicilizer;
 import co.sofka.command.dto.response.ResponseMs;
-import co.sofka.command.query.ListAllCustomerHandler;
-import co.sofka.data.ResponseAPI;
-import co.sofka.usecase.IGetAllCustomerService;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.headers.Header;
+import co.sofka.command.dto.response.TokenResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,20 +18,20 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/client")
+@RequestMapping("/utils")
 @AllArgsConstructor
-public class CustomerController {
+public class UtilsController {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UtilsController.class);
 
-    private final ListAllCustomerHandler handler;
+    private final TokenGenerateHandler handler;
 
 
-    @PostMapping("/all")
+
+
+    @PostMapping("/generate")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Request example",
             required = true,
@@ -48,18 +42,14 @@ public class CustomerController {
                             examples = {
                                     @ExampleObject(
                                             name = "Ejemplo JSON",
-                                            value = "{\"dinHeader\":{\"dispositivo\":\"PC\",\"idioma\":\"es\",\"uuid\":\"02e3eb27-6fb1-e542-e157-c301cc77ad2c\",\"ip\":\"localhost\",\"horaTransaccion\":\"string\",\"llaveSimetrica\":\"xaqVyedHolrJB9vW4lIj5u9nuWIiaPpAQoOK4hm2j+Q=\",\"vectorInicializacion\":\"Gz3MLPvKU1T5Pc3FfmNYPe9nuWIiaPpAQoOK4hm2j+Q=\"},\"dinBody\":{\"id\":\"1\"}}",
+                                            value = "{\"dinHeader\":{\"dispositivo\":\"PC\",\"idioma\":\"es\",\"uuid\":\"02e3eb27-6fb1-e542-e157-c301cc77ad2c\",\"ip\":\"localhost\",\"horaTransaccion\":\"string\",\"llaveSimetrica\":\"xaqVyedHolrJB9vW4lIj5u9nuWIiaPpAQoOK4hm2j+Q=\",\"vectorInicializacion\":\"Gz3MLPvKU1T5Pc3FfmNYPe9nuWIiaPpAQoOK4hm2j+Q=\"},\"dinBody\":{\"username\":\"pablo\",\"password\":\"12qwaszx\"}}",
                                             summary = "Full request")})})
-
     @ApiResponse(
             responseCode = "200",
             content = @Content(schema = @Schema(implementation = ResponseMs.class)))
-    public ResponseEntity<ResponseMs<List<CustomerDTO>>> getAll(
-
-            @RequestBody RequestMs<Void> request
-    ) {
+    public ResponseEntity<ResponseMs<TokenResponse>> generateToken(@RequestBody RequestMs<TokenInicilizer> request) {
         logger.info("Buscando todos los Customer");
-        return new ResponseEntity<>( handler.getAll(request), HttpStatus.OK);
+        return new ResponseEntity<>( handler.apply(request), HttpStatus.OK);
     }
 
 

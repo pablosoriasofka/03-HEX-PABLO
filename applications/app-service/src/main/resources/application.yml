@@ -81,6 +81,6 @@ general:
 
 URL:
   OpenEndpointsRegex: >
-    "/utils/generate",      
+    "/utils/generate",
       
       

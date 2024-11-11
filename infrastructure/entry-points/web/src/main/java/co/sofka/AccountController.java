@@ -31,14 +31,14 @@ public class AccountController {
     private final FindAccountByNumberHandler findAccountByNumberHandler;
 
 
-    @GetMapping("/all")
+    @PostMapping("/all")
     public ResponseEntity<ResponseMs<List<Account>>> getAll(@RequestBody RequestMs<Void> request) {
         logger.info("Buscando todos los Account");
         return new ResponseEntity<>( handler.getAll(request), HttpStatus.OK);
     }
 
 
-    @GetMapping("/byNumber")
+    @PostMapping("/byNumber")
     public ResponseEntity<ResponseMs<Account>> getByNumber(@RequestBody RequestMs<AccountFindRequest> request) {
         logger.info("Buscando todos los Account por numero");
         return new ResponseEntity<>( findAccountByNumberHandler.findByNumber(request), HttpStatus.OK);

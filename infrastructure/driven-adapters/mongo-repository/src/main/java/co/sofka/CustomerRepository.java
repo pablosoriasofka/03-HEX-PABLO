@@ -34,7 +34,31 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public Customer findByUsername(String username) {
-        return null;
+        List<CustomerEntity> all = mongoTemplate.findAll(CustomerEntity.class, "banktransaction");
+
+        all = all.stream().filter(item->item.getUsername().equals(username)).collect(Collectors.toList());
+
+        if(all.size() == 0){
+            return null;
+        }
+        CustomerEntity item = all.get(0);
+        Customer customer = new Customer();
+        customer.setId(item.getId().toString());
+        customer.setUsername(item.getUsername());
+        customer.setPwd(item.getPwd());
+        customer.setAccounts(new ArrayList<>());
+        if(item.getAccounts() != null){
+            customer.setAccounts(item.getAccounts().stream().map(accountEntity -> {
+                Account account = new Account();
+                account.setId(accountEntity.getId());
+                account.setNumber(accountEntity.getNumber());
+                account.setAmount(accountEntity.getAmount());
+                account.setCustomer(customer);
+                return account;
+            }).collect(Collectors.toList()));
+        }
+        return customer;
+
     }
 
     @Override
@@ -48,6 +72,7 @@ public class CustomerRepository implements ICustomerRepository {
             Customer customer = new Customer();
             customer.setId(item.getId().toString());
             customer.setUsername(item.getUsername());
+            customer.setPwd(item.getPwd());
             customer.setAccounts(new ArrayList<>());
             if(item.getAccounts() != null){
                 customer.setAccounts(item.getAccounts().stream().map(accountEntity -> {

@@ -5,6 +5,7 @@ import co.sofka.command.dto.request.RequestMs;
 import co.sofka.command.dto.request.TokenInicilizer;
 import co.sofka.command.dto.response.DinError;
 import co.sofka.command.dto.response.ResponseMs;
+import co.sofka.command.dto.response.TokenResponse;
 import co.sofka.config.TokenByDinHeaders;
 import co.sofka.middleware.CustomerNotExistException;
 import co.sofka.middleware.PasswordIncorrectoException;
@@ -30,9 +31,9 @@ public class TokenGenerateHandler {
 
     private final JwtUtils jwtUtils;
 
-    public ResponseMs<String> apply(RequestMs<TokenInicilizer> request) {
+    public ResponseMs<TokenResponse> apply(RequestMs<TokenInicilizer> request) {
 
-        ResponseMs<String> responseMs = new ResponseMs<>();
+        ResponseMs<TokenResponse> responseMs = new ResponseMs<>();
         responseMs.setDinHeader(request.getDinHeader());
         DinError error = new DinError();
         responseMs.setDinError(error);
@@ -49,7 +50,7 @@ public class TokenGenerateHandler {
         logger.info("Password Matches : {}",b);
 
         if (!b) {
-            throw new PasswordIncorrectoException("Password Incorrecto",request.getDinHeader(),1005);
+            throw new PasswordIncorrectoException("Datos Incorrecto",request.getDinHeader(),1005);
         }
 
         LoginPartnerRequest loginPartnerRequest = new LoginPartnerRequest();
@@ -58,7 +59,10 @@ public class TokenGenerateHandler {
         loginPartnerRequest.setPermisos(List.of("WRITE","READ"));
         String tokenString = jwtUtils.generateJwtToken(loginPartnerRequest);
 
-        responseMs.setDinBody(tokenString);
+        TokenResponse tokenResponse = new TokenResponse();
+        tokenResponse.setToken(tokenString);
+
+        responseMs.setDinBody(tokenResponse);
 
         return responseMs;
     }
