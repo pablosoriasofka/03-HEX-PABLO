@@ -4,6 +4,8 @@ COPY . .
 RUN ls
 # Construir la aplicación
 RUN ls
+# Otorga permisos de ejecución al archivo gradlew
+RUN chmod +x ./gradlew
 RUN ./gradlew app-service:bootJar
 
 # Etapa de ejecución
