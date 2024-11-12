@@ -5,7 +5,7 @@ RUN ["ls"]
 # Construir la aplicación
 RUN cd /app/applications/app-service/
 RUN ["ls"]
-RUN gradle build --no-daemon
+RUN ../../gradlew build
 
 # Etapa de ejecución
 
