@@ -2,14 +2,14 @@
 FROM openjdk:21-jdk-slim
 WORKDIR /app
 COPY . .
-
+RUN ["ls"]
 # Construir la aplicación
 #RUN gradle build --no-daemon
 
 # Etapa de ejecución
 
 WORKDIR /app
-
+RUN ["ls"]
 # Copiar el archivo JAR generado desde la etapa de construcción
 COPY --from=build /app/*.jar /app/app.jar
 
