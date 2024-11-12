@@ -20,4 +20,4 @@ ENV JAVA_TOOL_OPTIONS="-XX:InitialHeapSize=1024m -XX:MaxHeapSize=2048m -XX:MaxRA
 ENTRYPOINT ["java", "-jar", "/app/app-service.jar"]
 
 # Exponer el puerto en el que la aplicación se ejecuta
-EXPOSE 8080
+EXPOSE 8089
