@@ -1,22 +1,18 @@
 package co.sofka.command.dto;
 
 
+import java.math.BigDecimal;
 
 public class BankTransactionBuys {
 
 
     private String accountNumberClient;
 
-
-    private String accountNumberStore;
-
-
-    private Double amount;
+    private BigDecimal amount;
 
 
     private int typeBuys;
 
-    private String pin;
 
     public BankTransactionBuys() {
     }
@@ -29,19 +25,12 @@ public class BankTransactionBuys {
         this.accountNumberClient = accountNumberClient;
     }
 
-    public String getAccountNumberStore() {
-        return accountNumberStore;
-    }
 
-    public void setAccountNumberStore(String accountNumberStore) {
-        this.accountNumberStore = accountNumberStore;
-    }
-
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -53,11 +42,5 @@ public class BankTransactionBuys {
         this.typeBuys = typeBuys;
     }
 
-    public String getPin() {
-        return pin;
-    }
 
-    public void setPin(String pin) {
-        this.pin = pin;
-    }
 }

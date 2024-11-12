@@ -1,16 +1,17 @@
 package co.sofka.command.dto;
 
 
+import java.math.BigDecimal;
+
 public class BankTransactionDepositCajero {
 
 
     private String accountNumberClient;
 
 
-    private Double amount;
+    private BigDecimal amount;
 
 
-    private String pin;
 
     public BankTransactionDepositCajero() {
     }
@@ -23,19 +24,13 @@ public class BankTransactionDepositCajero {
         this.accountNumberClient = accountNumberClient;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
-    public String getPin() {
-        return pin;
-    }
 
-    public void setPin(String pin) {
-        this.pin = pin;
-    }
 }

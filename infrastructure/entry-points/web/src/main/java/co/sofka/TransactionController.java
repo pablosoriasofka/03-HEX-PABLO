@@ -1,12 +1,8 @@
 package co.sofka;
 
 
-import co.sofka.command.create.RegisterTransactionDepositSucursalHandler;
-import co.sofka.command.create.RegisterTransactionDepositTransferHandler;
-import co.sofka.command.create.RegisterTransactionWithDrawFromATMHandler;
-import co.sofka.command.dto.BankTransactionDepositSucursal;
-import co.sofka.command.dto.BankTransactionDepositTransfer;
-import co.sofka.command.dto.BankTransactionWithdrawFromATM;
+import co.sofka.command.create.*;
+import co.sofka.command.dto.*;
 import co.sofka.command.dto.request.RequestMs;
 import co.sofka.command.dto.response.ResponseMs;
 import co.sofka.data.ResponseAPI;
@@ -32,6 +28,10 @@ public class TransactionController {
 
     private final RegisterTransactionDepositTransferHandler handlerTransfer;
 
+    private final RegisterTransactionDepositCajeroHandler handlerCajero;
+
+    private final RegisterTransactionCompraHandler handlerCompra;
+
 
     @PostMapping("/retitarCajero")
     public ResponseEntity<ResponseMs<Transaction>> bankTransactionWithdrawFromATM(@Valid @RequestBody RequestMs<BankTransactionWithdrawFromATM> bankTransaction) {
@@ -50,6 +50,25 @@ public class TransactionController {
     public ResponseEntity<ResponseMs<Transaction>> bankTransactionDepositTrasfer(@Valid @RequestBody RequestMs<BankTransactionDepositTransfer> item) {
         logger.info("Guardando transaccion bancaria");
         return new ResponseEntity<>( handlerTransfer.apply(item), HttpStatus.OK);
+    }
+
+
+    @PostMapping("/comprarEstablecimiento")
+    public ResponseEntity<ResponseMs<Transaction>> comprarEstablecimiento(@Valid @RequestBody RequestMs<BankTransactionBuys> item) {
+        logger.info("Guardando comprar Establecimiento");
+        return new ResponseEntity<>( handlerCompra.apply(item), HttpStatus.OK);
+    }
+
+    @PostMapping("/comprarWeb")
+    public ResponseEntity<ResponseMs<Transaction>> comprarWeb(@Valid @RequestBody RequestMs<BankTransactionBuys> item) {
+        logger.info("Guardando comprar Web");
+        return new ResponseEntity<>( handlerCompra.apply(item), HttpStatus.OK);
+    }
+
+    @PostMapping("/depositarCajero")
+    public ResponseEntity<ResponseMs<Transaction>> depositarCajero(@Valid @RequestBody RequestMs<BankTransactionDepositCajero> item) {
+        logger.info("Guardando comprar Web");
+        return new ResponseEntity<>( handlerCajero.apply(item), HttpStatus.OK);
     }
 
 
