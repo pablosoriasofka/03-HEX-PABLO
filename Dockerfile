@@ -3,9 +3,8 @@ WORKDIR /app
 COPY . .
 RUN ls
 # Construir la aplicación
-WORKDIR /app/applications/app-service/
 RUN ls
-RUN ../../gradlew build
+RUN ./gradlew app-service:bootJar
 
 # Etapa de ejecución
 
