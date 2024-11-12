@@ -11,7 +11,7 @@ COPY . .
 WORKDIR /app
 
 # Copiar el archivo JAR generado desde la etapa de construcción
-COPY /app/*.jar /app/app.jar
+COPY --from=build /app/*.jar /app/app.jar
 
 # Configurar las opciones de Java
 ENV JAVA_TOOL_OPTIONS="-XX:InitialHeapSize=1024m -XX:MaxHeapSize=2048m -XX:MaxRAMPercentage=80 -Xmx2048m -Xms1024m"
