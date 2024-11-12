@@ -1,10 +1,10 @@
 FROM gradle:7.6.0-jdk17 AS build
 WORKDIR /app
 COPY . .
-RUN ["ls"]
+RUN ls
 # Construir la aplicación
-RUN cd /app/applications/app-service/
-RUN ["ls"]
+WORKDIR /app/applications/app-service/
+RUN ls
 RUN ../../gradlew build
 
 # Etapa de ejecución
