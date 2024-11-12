@@ -1,4 +1,5 @@
 #FROM bitnami/gradle AS build
+FROM openjdk:21-jdk-slim
 WORKDIR /app
 COPY . .
 
@@ -6,7 +7,7 @@ COPY . .
 #RUN gradle build --no-daemon
 
 # Etapa de ejecución
-FROM openjdk:21-jdk
+
 WORKDIR /app
 
 # Copiar el archivo JAR generado desde la etapa de construcción
