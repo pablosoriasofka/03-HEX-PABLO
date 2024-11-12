@@ -26,6 +26,14 @@ public class CustomerRepository implements ICustomerRepository {
     private final MongoTemplate mongoTemplate;
 
 
+    @Override
+    public Customer save(Customer customer) {
+        if (customer.getAccounts()==null){
+            customer.setAccounts(new ArrayList<>());
+        }
+        mongoTemplate.save(customer, "banktransaction");
+        return customer;
+    }
 
     @Override
     public Customer findById(String id) {

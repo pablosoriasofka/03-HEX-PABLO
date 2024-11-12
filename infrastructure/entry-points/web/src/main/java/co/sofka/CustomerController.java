@@ -1,7 +1,9 @@
 package co.sofka;
 
 
+import co.sofka.command.create.SaveCustumerHandler;
 import co.sofka.command.dto.CustomerDTO;
+import co.sofka.command.dto.request.CustomerSaveDTO;
 import co.sofka.command.dto.request.RequestMs;
 import co.sofka.command.dto.response.ResponseMs;
 import co.sofka.command.query.ListAllCustomerHandler;
@@ -36,6 +38,8 @@ public class CustomerController {
 
     private final ListAllCustomerHandler handler;
 
+    private final SaveCustumerHandler saveCustumerHandler;
+
 
     @PostMapping("/all")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -60,6 +64,19 @@ public class CustomerController {
     ) {
         logger.info("Buscando todos los Customer");
         return new ResponseEntity<>( handler.getAll(request), HttpStatus.OK);
+    }
+
+
+    @PostMapping("/save")
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(schema = @Schema(implementation = ResponseMs.class)))
+    public ResponseEntity<ResponseMs<CustomerDTO>> save(
+
+            @RequestBody RequestMs<CustomerSaveDTO> request
+    ) {
+        logger.info("Save Customer");
+        return new ResponseEntity<>( saveCustumerHandler.save(request), HttpStatus.OK);
     }
 
 

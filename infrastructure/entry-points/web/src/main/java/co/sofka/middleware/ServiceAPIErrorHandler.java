@@ -43,7 +43,22 @@ public class ServiceAPIErrorHandler {
         return new ResponseEntity<>(responseMs, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = {CustomerByUsernameExistException.class})
+    public ResponseEntity<Object> CustomerByUsernameExistException(CustomerByUsernameExistException ex, WebRequest request) {
+        ResponseMs<Account> responseMs = new ResponseMs<>();
+        responseMs.setDinHeader(ex.getDinHeader());
+        DinError error = new DinError();
 
+        error.setMensaje(ex.getMessage());
+        error.setCodigo(String.valueOf(ex.getCode()));
+        error.setFecha(LocalDateTime.now().toString());
+        error.setTipo("ERROR");
+        error.setOrigen(this.getClass().getName());
+        error.setDetalle(ex.getLocalizedMessage());
+        responseMs.setDinError(error);
+
+        return new ResponseEntity<>(responseMs, new HttpHeaders(), HttpStatus.OK);
+    }
 
 
     @ExceptionHandler(value = {CustomerNotExistException.class})
