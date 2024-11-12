@@ -1,5 +1,6 @@
 package co.sofka.command.create;
 
+import co.sofka.Account;
 import co.sofka.Customer;
 import co.sofka.command.dto.AccountDTO;
 import co.sofka.command.dto.CustomerDTO;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,17 +51,40 @@ public class SaveCustumerHandler {
         customer.setUsername(request.getDinBody().getUsername());
         customer.setPwd(jwtUtils.encryptionPassword(request.getDinBody().getPwd()));
 
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setUsername(customer.getUsername());
+        customerDTO.setAccounts(new ArrayList<>());
+
         serviceAll.getAll().forEach(customer1 -> {
             if(customer1.getUsername().equals(customer.getUsername())){
                 throw new CustomerByUsernameExistException("Ya existe un Customer con el usuario proporcionado.",request.getDinHeader(),1006);
             }
         });
 
+        if (request.getDinBody().getAccounts() != null && !request.getDinBody().getAccounts().isEmpty()) {
+            List<AccountDTO> accounts = request.getDinBody().getAccounts();
+            customerDTO.setAccounts(accounts);
+
+            if (accounts != null && !accounts.isEmpty()) {
+                List<Account> accountsAll = new ArrayList<>();
+               accounts.forEach(accountDTO -> {
+                   Account accountDTO1 = new Account();
+                   accountDTO1.setNumber(accountDTO.getNumber());
+                   accountDTO1.setAmount(accountDTO.getAmount());
+                   accountDTO1.setCreatedAt(LocalDate.now());
+                   accountDTO1.setDeleted(false);
+                   accountsAll.add(accountDTO1);
+               });
+                customer.setAccounts(accountsAll);
+            }
+
+
+        }
+
+
         service.save(customer);
 
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setUsername(customer.getUsername());
-        customerDTO.setAccounts(new ArrayList<>());
+
 
         responseMs.setDinBody(customerDTO);
 
