@@ -1,4 +1,4 @@
-FROM gradle:7.5.1-jdk21 AS build
+FROM bitnami/gradle AS build
 WORKDIR /app
 COPY . .
 
